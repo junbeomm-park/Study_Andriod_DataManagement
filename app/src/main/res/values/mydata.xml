@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="mylist_data">
+        <item>김범룡</item>
+        <item>박정운</item>
+        <item>뱅크</item>
+        <item>BTS</item>
+        <item>coldplay</item>
+        <item>GUNS</item>
+        <item>이승철</item>
+        <item>메탈리카</item>
+        <item>소녀시대</item>
+        <item>소찬휘</item>
+        <item>신승훈</item>
+        <item>녹색지대</item>
+
+    </string-array>
+</resources>
