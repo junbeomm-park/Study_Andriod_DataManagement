@@ -1,12 +1,15 @@
 package com.example.datamanagement.exam;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -30,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     // HashMap (디비배열과 안겹치게 변수명 선언 해야함)
     ArrayList<HashMap<String,String>> ArrayList =
             new ArrayList<HashMap<String, String>>();
+    public static final int INPUT_DATA_RESULT = 1;
 
 
 
@@ -38,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         productName = findViewById(R.id.edtName);
+        AutoCompleteTextView auto = findViewById(R.id.edtName);
         price = findViewById(R.id.edtPrice);
         amount = findViewById(R.id.edtSu);
         result = findViewById(R.id.list);
@@ -46,6 +51,14 @@ public class MainActivity extends AppCompatActivity {
         dbHelper = new ExamDBHelper(this);
         // 2. SQLiteDatabase 생성
         db = dbHelper.getWritableDatabase(); //읽기쓰기가 가능하도록
+
+        // AutoComplete
+        ArrayAdapter autoadapter = ArrayAdapter.createFromResource(this,
+                                                                R.array.mylist_data,
+                                        android.R.layout.simple_dropdown_item_1line);
+        auto.setAdapter(autoadapter);
+
+
 
 
     }
@@ -85,7 +98,16 @@ public class MainActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_1,
                 dataList);
         result.setAdapter(adapter);
-
+        //상세페이지
+        result.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(MainActivity.this, ReadActivity.class);
+                intent.putExtra("resultPage",dataList[position]);
+                startActivityForResult(intent,INPUT_DATA_RESULT);
+                Log.d("park",dataList[position]);
+            }
+        });
     }
    public void selectAll2(View v) {
 
@@ -108,24 +130,47 @@ public class MainActivity extends AppCompatActivity {
             i++;
 
 
-
-
-
-
-
         }
-
-
         SimpleAdapter adapter = new SimpleAdapter(this,
                 ArrayList , // HashMap으로 구성된 데이터가 저장된 리스트
                 android.R.layout.simple_list_item_2, // row 디자인
                 new String[]{"name","price"} , // HashMap에 저장된 key목록
                 new int[]{android.R.id.text1,android.R.id.text2});
         result.setAdapter(adapter);
+       //상세페이지
+       result.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+           @Override
+           public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+               Intent intent = new Intent(MainActivity.this, ReadActivity.class);
+               intent.putExtra("resultPage",dataList[position]);
+               startActivityForResult(intent,INPUT_DATA_RESULT);
+               Log.d("park",dataList[position]);
+           }
+       });
+
+    }
+    public void search (View v){
+        result.setAdapter(result.getAdapter());
+        String sql = "select * from product where name = ?";
+        Cursor cursor = db.rawQuery(sql,new String[]{productName.getText().toString()});
+        showToast("조회된 data : " + cursor.toString());
+        int count = cursor.getCount();
+        int i = 0;
+        String[] dataList = new String[count];
+        while (cursor.moveToNext()){
+            int _id = cursor.getInt(0);
+            String name = cursor.getString(1);
+            int price = cursor.getInt(2);
+
+            dataList[i] = _id + name + price;
+        }
+        ArrayAdapter adapter = new ArrayAdapter(this,
+                android.R.layout.simple_list_item_1,
+                dataList);
+                result.setAdapter(adapter);
 
 
     }
-    public void
 
 
     public void showToast(String msg){
