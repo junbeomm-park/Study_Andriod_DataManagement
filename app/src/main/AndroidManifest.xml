@@ -9,8 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DataManagement">
-        <activity android:name=".MainActivity"></activity>
-        <activity android:name=".exam.MainActivity">
+        <activity android:name=".exam.ReadActivity"></activity>
+        <activity android:name=".sqllite.DBMainActivity" />
+        <activity android:name=".exam.ExamMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

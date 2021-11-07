@@ -149,15 +149,15 @@ public class MainActivity extends AppCompatActivity {
        });
 
     }
-    public void search (View v){
+    public void search (View v) {
         result.setAdapter(result.getAdapter());
-        String sql = "select * from product where name = ?";
-        Cursor cursor = db.rawQuery(sql,new String[]{productName.getText().toString()});
+        String sql = "select * from product where name like ?";
+        Cursor cursor = db.rawQuery(sql, new String[]{productName.getText().toString()});
         showToast("조회된 data : " + cursor.toString());
         int count = cursor.getCount();
         int i = 0;
         String[] dataList = new String[count];
-        while (cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             int _id = cursor.getInt(0);
             String name = cursor.getString(1);
             int price = cursor.getInt(2);
@@ -167,10 +167,9 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter adapter = new ArrayAdapter(this,
                 android.R.layout.simple_list_item_1,
                 dataList);
-                result.setAdapter(adapter);
-
-
+        result.setAdapter(adapter);
     }
+
 
 
     public void showToast(String msg){
