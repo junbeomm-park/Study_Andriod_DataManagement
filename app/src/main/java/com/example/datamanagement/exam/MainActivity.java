@@ -31,8 +31,7 @@ public class MainActivity extends AppCompatActivity {
     ExamDBHelper dbHelper; //데이터베이스 파일생성, 테이블생성, 업데이트....
     SQLiteDatabase db; // 로컬디비연동을 위한 핵심 클래스
     // HashMap (디비배열과 안겹치게 변수명 선언 해야함)
-    ArrayList<HashMap<String,String>> ArrayList =
-            new ArrayList<HashMap<String, String>>();
+
     public static final int INPUT_DATA_RESULT = 1;
 
 
@@ -117,6 +116,8 @@ public class MainActivity extends AppCompatActivity {
         int count = cursor.getCount();
         showToast("조회된 row : " + count);
         String[] dataList = new String[count];
+       ArrayList<HashMap<String,String>> ArrayList =
+               new ArrayList<HashMap<String, String>>();
         int i = 0;
         while (cursor.moveToNext()){
             HashMap<String,String> item = new HashMap<>();
@@ -138,35 +139,35 @@ public class MainActivity extends AppCompatActivity {
                 new int[]{android.R.id.text1,android.R.id.text2});
         result.setAdapter(adapter);
        //상세페이지
-       result.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-           @Override
-           public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-               Intent intent = new Intent(MainActivity.this, ReadActivity.class);
-               intent.putExtra("resultPage",dataList[position]);
-               startActivityForResult(intent,INPUT_DATA_RESULT);
-               Log.d("park",dataList[position]);
-           }
-       });
+
 
     }
     public void search (View v) {
         result.setAdapter(result.getAdapter());
-        String sql = "select * from product where name like ?";
+        String sql = "select * from product where name = ?";
         Cursor cursor = db.rawQuery(sql, new String[]{productName.getText().toString()});
-        showToast("조회된 data : " + cursor.toString());
-        int count = cursor.getCount();
+        ArrayList<HashMap<String,String>> ArrayList =
+                new ArrayList<HashMap<String, String>>();
         int i = 0;
-        String[] dataList = new String[count];
-        while (cursor.moveToNext()) {
-            int _id = cursor.getInt(0);
+        while (cursor.moveToNext()){
+            HashMap<String,String> item = new HashMap<>();
             String name = cursor.getString(1);
+            item.put("name",name);
             int price = cursor.getInt(2);
+            item.put("price",price+"");
+            ArrayList.add(item);
 
-            dataList[i] = _id + name + price;
+
+
+
+
+
         }
-        ArrayAdapter adapter = new ArrayAdapter(this,
-                android.R.layout.simple_list_item_1,
-                dataList);
+        SimpleAdapter adapter = new SimpleAdapter(this,
+                ArrayList , // HashMap으로 구성된 데이터가 저장된 리스트
+                android.R.layout.simple_list_item_2, // row 디자인
+                new String[]{"name","price"} , // HashMap에 저장된 key목록
+                new int[]{android.R.id.text1,android.R.id.text2});
         result.setAdapter(adapter);
     }
 
